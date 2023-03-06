@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Playball&display=swap');
+
+.logoFont{
+    font-family: 'Playball', cursive;
+}
+
+.trigger {
+    padding: 0 24px;
+    font-size: 18px;
+    line-height: 64px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.trigger:hover {
+    color: #1890ff;
+}
+
+.logout-icon {
+    padding: 0 24px;
+    font-size: 18px;
+    line-height: 64px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.logout-icon:hover {
+    color: #1890ff;
+}
+
+.logo {
+    height: 32px;
+    margin: 16px;
+    /* background: rgba(255, 255, 255, 0.3); */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
