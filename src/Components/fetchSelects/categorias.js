@@ -17,13 +17,17 @@ function SelectCategoria({ value, onChange }){
         .then(res => setData(res?.data?.categorias || []));
     },[])
 
-    return <>
-    <Select showSearch placeholder="Categoria..." value={value} onChange={onChange}>
-        {data.map(categoria=>(
-            <Select.Option key={categoria.id} value={categoria.id}>{categoria.categoria}</Select.Option>
-        ))}
-    </Select>
-    </>
+    return (
+        <Select 
+            showSearch 
+            placeholder="Categoria..." 
+            value={value} 
+            onChange={onChange}
+            optionFilterProp="children"
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) }
+            options={data.map(categoria => ({value: categoria.id, label: categoria.categoria}))}
+        />
+    )
 }
 
 export default  SelectCategoria

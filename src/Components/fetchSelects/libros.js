@@ -17,13 +17,17 @@ function SelectLibro({ value, onChange }){
         .then(res => setData(res?.data?.libros || []));
     },[])
 
-    return <>
-    <Select showSearch placeholder="Libro..." value={value} onChange={onChange}>
-        {data.map(libro=>(
-            <Select.Option key={libro.id} value={libro.id}>{libro.titulo}</Select.Option>
-        ))}
-    </Select>
-    </>
+    return (
+        <Select 
+            showSearch 
+            placeholder="Libro..." 
+            value={value} 
+            onChange={onChange}
+            optionFilterProp="children"
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) }
+            options={data.map(libro => ({value: libro.id, label: libro.titulo}))}
+        />
+    )
 }
 
 export default  SelectLibro

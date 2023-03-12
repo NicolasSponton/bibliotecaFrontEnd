@@ -1,4 +1,4 @@
-import { Button, Card, Divider, Table, Input, message, Dropdown, Modal } from "antd"
+import { Button, Card, Divider, Table, Input, message, Dropdown, Modal, Space, Tag } from "antd"
 import { MAIN_API } from "../../Config/env";
 import { PageHeader } from '@ant-design/pro-layout';
 import { PlusOutlined, MenuOutlined, ExclamationCircleFilled } from '@ant-design/icons';
@@ -43,8 +43,14 @@ function Libros(){
             title:"Copias",
             dataIndex:"copias",
             key:"copias",
-            sorter:true,
-			sortDirections: ['ascend', 'descend', 'ascend']
+            width: 1,
+            render:(val,record)=> (
+                <Space>
+                    <Tag color="#2db7f5">prestados: {record.copiasPrestadas || 0}</Tag>
+                    <Tag color="#87d068">disponibles: {(record.copias || 0) - (record.copiasPrestadas || 0)}</Tag>
+                    <Tag color="#f50">totales: {record.copias || 0}</Tag>
+                </Space>
+            )
         },
         {
             title:"Editorial",
@@ -141,7 +147,7 @@ function Libros(){
             title="Libros"
             extra={
                 <Button type="primary" onClick={()=>setOpenNuevo({open:true})}>
-                    <PlusOutlined /> Nuevo
+                    <PlusOutlined /> Nuevo 
                 </Button>
             }
         />

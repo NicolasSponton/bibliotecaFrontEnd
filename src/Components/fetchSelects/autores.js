@@ -17,13 +17,17 @@ function SelectAutor({ value, onChange }){
         .then(res => setData(res?.data?.autores || []));
     },[])
 
-    return <>
-    <Select showSearch placeholder="Autor..." value={value} onChange={onChange}>
-        {data.map(autor=>(
-            <Select.Option key={autor.id} value={autor.id}>{autor.apellido} {autor.nombre}</Select.Option>
-        ))}
-    </Select>
-    </>
+    return (
+        <Select 
+            showSearch 
+            placeholder="Autor..." 
+            value={value} 
+            onChange={onChange}
+            optionFilterProp="children"
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) }
+            options={data.map(autor => ({value: autor.id, label: autor.apellido + " " + autor.nombre}))}
+        />
+    )
 }
 
 export default  SelectAutor

@@ -36,23 +36,31 @@ function Inicio(){
             title:"Alumno",
             dataIndex:["alumno","apellido"],
             key:"apellido",
+            sorter:true,
+			sortDirections: ['ascend', 'descend', 'ascend'],
             render:(text,record)=> record.alumno.apellido + " " + record.alumno.nombre
         },
         {
             title:"Titulo",
             dataIndex:["libro","titulo"],
             key:"titulo",
+            sorter:true,
+			sortDirections: ['ascend', 'descend', 'ascend'],
         },
         {
             title:"Fecha Préstamo",
             dataIndex:"fechaPrestamo",
-            key:"fechaPrestamo",
+            key:"fecha_prestamo",
+            sorter:true,
+			sortDirections: ['ascend', 'descend', 'ascend'],
             render:val=>moment(val).format("DD/MM/YYYY"),
         },
         {
             title:"Fecha Limite",
             dataIndex:"fechaLimite",
-            key:"fechaLimite",
+            key:"fecha_limite",
+            sorter:true,
+			sortDirections: ['ascend', 'descend', 'ascend'],
             render:val=>moment(val).format("DD/MM/YYYY"),
         },
         {

@@ -17,13 +17,17 @@ function SelectAlumno({ value, onChange }){
         .then(res => setData(res?.data?.alumnos || []));
     },[])
 
-    return <>
-    <Select showSearch placeholder="Alumno..." value={value} onChange={onChange}>
-        {data.map(alumno=>(
-            <Select.Option key={alumno.id} value={alumno.id}>{alumno.apellido} {alumno.nombre}</Select.Option>
-        ))}
-    </Select>
-    </>
+    return (
+        <Select 
+            showSearch 
+            placeholder="Alumno..." 
+            value={value} 
+            onChange={onChange}
+            optionFilterProp="children"
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) }
+            options={data.map(alumno => ({value: alumno.id, label: alumno.apellido + " " + alumno.nombre}))}
+        />
+    )
 }
 
 export default  SelectAlumno

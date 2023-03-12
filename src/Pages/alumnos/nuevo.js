@@ -41,7 +41,7 @@ function ModalNuevo({open,closeModal,update}){
             <Form.Item label="Apellido" name="apellido" rules={[{required:true}]}>
                 <Input placeholder="Apellido..."/>
             </Form.Item>
-            <Form.Item label="DNI" name="dni">
+            <Form.Item label="DNI" name="dni" rules={[{required:true}]}>
                 <InputNumber placeholder="45450450" min={1000000} max={99999999} type="number" controls={false} style={{width:"100%"}} />
             </Form.Item>
             <Form.Item label="Celular" name="celular">

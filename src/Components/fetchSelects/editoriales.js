@@ -17,13 +17,17 @@ function SelectEditorial({ value, onChange }){
         .then(res => setData(res?.data?.editoriales || []));
     },[])
 
-    return <>
-    <Select showSearch placeholder="Editorial..." value={value} onChange={onChange}>
-        {data.map(editorial=>(
-            <Select.Option key={editorial.id} value={editorial.id}>{editorial.editorial}</Select.Option>
-        ))}
-    </Select>
-    </>
+    return (
+        <Select 
+            showSearch 
+            placeholder="Editorial..." 
+            value={value} 
+            onChange={onChange}
+            optionFilterProp="children"
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) }
+            options={data.map(editorial => ({value: editorial.id, label: editorial.editorial}))}
+        />
+    )
 }
 
 export default  SelectEditorial

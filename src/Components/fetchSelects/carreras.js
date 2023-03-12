@@ -18,13 +18,17 @@ function SelectCarrera({ value, onChange }){
 
     },[])
 
-    return <>
-    <Select allowClear showSearch placeholder="Carrera..." value={value} onChange={onChange}>
-        {data.map(carrera=>(
-            <Select.Option key={carrera.id} value={carrera.id}>{carrera.carrera}</Select.Option>
-        ))}
-    </Select>
-    </>
+    return (
+        <Select 
+            showSearch 
+            placeholder="Carrera..." 
+            value={value} 
+            onChange={onChange}
+            optionFilterProp="children"
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) }
+            options={data.map(carrera => ({value: carrera.id, label: carrera.carrera}))}
+        />
+    )
 }
 
 export default  SelectCarrera
