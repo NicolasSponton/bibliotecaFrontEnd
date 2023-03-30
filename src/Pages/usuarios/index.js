@@ -62,14 +62,18 @@ function Usuarios(){
 			width: 50,
 			align: 'center',
             render: (text, record) => (
-                <Dropdown menu={{
-                    items:[
-                        { key: '1', label: "Editar", onClick:() => setOpenEditar({ open: true, record: record })},
-                        { key: '2', label: "Borrar", onClick:() => showDeleteConfirm( record )},
-                    ]
-                }}>
-                    <Button size="small"> <MenuOutlined /> </Button>
-                </Dropdown>
+                !(record?.usuario === "admin") 
+                    ? (
+                        <Dropdown menu={{
+                            items:[
+                                { key: '1', label: "Editar", onClick:() => setOpenEditar({ open: true, record: record })},
+                                { key: '2', label: "Borrar", onClick:() => showDeleteConfirm( record )},
+                            ]
+                        }}>
+                            <Button size="small"> <MenuOutlined /> </Button>
+                        </Dropdown>
+                    ) : null
+                
             )
 		}] : []
     ]

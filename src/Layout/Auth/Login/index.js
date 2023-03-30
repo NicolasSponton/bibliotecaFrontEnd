@@ -55,7 +55,7 @@ function Login (props){
                     autoComplete="off"
                 >
                     <Form.Item
-                        label="Username"
+                        label="Usuario"
                         name="username"
                         rules={[ { required: true, message: 'Por favor ingrese su nombre de usuario!' } ]}
                     >
@@ -63,7 +63,7 @@ function Login (props){
                     </Form.Item>
                     
                     <Form.Item
-                        label="Password"
+                        label="Contraseña"
                         name="password"
                         rules={[ { required: true, message: 'Por favor ingrese su contraseña!' } ]}
                     >
