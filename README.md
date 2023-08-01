@@ -29,7 +29,7 @@ In turn, students can also be loaded into the system and later lend a book to a 
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone NicolasSponton/bibliotecaFrontEnd
    ```
 2. Install NPM packages
    ```sh
