@@ -2,12 +2,8 @@
 
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="300" height="300">
-  </a>
-
-<h3 align="center">Mi Biblioteca</h3>
-
+  <img src="images/logo.png" alt="Logo" width="300" height="300">
+  <h3 align="center">Mi Biblioteca</h3>
   <p align="center">
     Library loan management application
   </p>
@@ -16,8 +12,7 @@
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
+[![Product Name Screen Shot][product-screenshot]]
 The application was developed with the intention of managing the loans of a school library.  
 The system has the ability to load books, in addition to data that can be associated with books such as authors, categories, publisher.
 In turn, students can also be loaded into the system and later lend a book to a student. These loans are registered in the system with the date the loan was made, to which student and which book. The system allows you to mark a loan as returned when the student returns the book.
