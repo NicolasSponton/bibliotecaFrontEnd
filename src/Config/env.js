@@ -1,2 +1,2 @@
-export const MAIN_API = "http://10.0.12.129:1323/biblioteca"
-export const AUTH_API = "http://10.0.12.129:1323"export const AUTH_API = "https://bibliotecabackend.onrender.com"
+export const MAIN_API = "https://bibliotecabackend.onrender.com/biblioteca"
+export const AUTH_API = "https://bibliotecabackend.onrender.com"
