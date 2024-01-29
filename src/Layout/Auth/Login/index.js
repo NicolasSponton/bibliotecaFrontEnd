@@ -55,6 +55,7 @@ function Login (props){
                     autoComplete="off"
                 >
                     <Form.Item
+                        initialValue={'admin'}
                         label="Usuario"
                         name="username"
                         rules={[ { required: true, message: 'Por favor ingrese su nombre de usuario!' } ]}
@@ -63,6 +64,7 @@ function Login (props){
                     </Form.Item>
                     
                     <Form.Item
+                        initialValue={'1234'}
                         label="Contraseña"
                         name="password"
                         rules={[ { required: true, message: 'Por favor ingrese su contraseña!' } ]}
