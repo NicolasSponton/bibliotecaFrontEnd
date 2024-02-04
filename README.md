@@ -7,6 +7,7 @@
   <p align="center">
     Library loan management application
   </p>
+  <a href="https://mibiblioteca-d57be.web.app/">Demo</a>
 </div>
 
 
@@ -34,6 +35,10 @@ In turn, students can also be loaded into the system and later lend a book to a 
 2. Install NPM packages
    ```sh
    npm install
+   ```
+3. Run the application
+   ```sh
+   npm start
    ```
 
 <!-- MARKDOWN LINKS & IMAGES -->
