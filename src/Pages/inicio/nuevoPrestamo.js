@@ -3,15 +3,19 @@ import { MAIN_API } from "../../Config/env";
 import SelectAlumno from "../../Components/fetchSelects/alumnos";
 import SelectLibro from "../../Components/fetchSelects/libros";
 import dayjs from 'dayjs';
+import { useState } from "react";
+import useApiFetch from "../../Hooks/useApiFetch";
 const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
 function ModalNuevoPrestamo({open,closeModal,update}){
     const [form] = Form.useForm();
-    
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
+
     const handleSubmit = (values) => {
-        
-        fetch(MAIN_API + '/prestamos', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/prestamos', {  
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -23,21 +27,17 @@ function ModalNuevoPrestamo({open,closeModal,update}){
                 fechaLimite:values?.fechaLimite?.utc()?.format(),
             })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                form.resetFields()
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            form.resetFields()
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     return <>
-    <Modal title="Nuevo Prestamo" open={open} onOk={()=>form.submit()} onCancel={closeModal}>
+    <Modal title="Nuevo Prestamo" open={open} onOk={()=>form.submit()} onCancel={closeModal} confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
             <Form.Item label="Alumno" name="idalumno" rules={[{required:true}]}>

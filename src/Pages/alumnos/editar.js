@@ -1,13 +1,18 @@
 import { Divider, Form, Input, Modal, message, InputNumber } from "antd"
 import { MAIN_API } from "../../Config/env";
 import SelectCarrera from "../../Components/fetchSelects/carreras";
+import useApiFetch from "../../Hooks/useApiFetch";
+import { useState } from "react";
 
 function ModalEditar({open,closeModal,update,record}){
     const [form] = Form.useForm();
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
     const handleSubmit = (values) => {
 
-        fetch(MAIN_API + '/alumnos', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/alumnos', {  
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -15,20 +20,16 @@ function ModalEditar({open,closeModal,update,record}){
             },
             body: JSON.stringify({ ...values })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     return <>
-    <Modal title="Editar Alumno" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose>
+    <Modal title="Editar Alumno" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} preserve={false}
             initialValues={{

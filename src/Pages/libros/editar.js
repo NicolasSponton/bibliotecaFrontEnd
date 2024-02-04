@@ -4,15 +4,19 @@ import SelectEditorial from "../../Components/fetchSelects/editoriales";
 import SelectCategoria from "../../Components/fetchSelects/categorias";
 import SelectAutor from "../../Components/fetchSelects/autores";
 import dayjs from 'dayjs';
+import useApiFetch from "../../Hooks/useApiFetch";
+import { useState } from "react";
 const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
 function ModalEditar({open,closeModal,update,record}){
     const [form] = Form.useForm();
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
     const handleSubmit = (values) => {
-
-        fetch(MAIN_API + '/libros', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/libros', {  
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -23,16 +27,12 @@ function ModalEditar({open,closeModal,update,record}){
                 fechaDePublicacion:values.fechaDePublicacion.utc().format(),
             })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     const initialValues = {
@@ -44,7 +44,7 @@ function ModalEditar({open,closeModal,update,record}){
     }
 
     return <>
-    <Modal title="Editar Libro" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose>
+    <Modal title="Editar Libro" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} initialValues={initialValues} preserve={false}>
             <Form.Item label="Titulo" name="titulo" rules={[{required:true}]}>

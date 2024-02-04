@@ -1,13 +1,18 @@
 import { Divider, Form, Input, Modal, message, InputNumber } from "antd"
 import { MAIN_API } from "../../Config/env";
 import SelectCarrera from "../../Components/fetchSelects/carreras";
+import { useState } from "react";
+import useApiFetch from "../../Hooks/useApiFetch";
 
 function ModalNuevo({open,closeModal,update}){
     const [form] = Form.useForm();
-    
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
+
     const handleSubmit = (values) => {
 
-        fetch(MAIN_API + '/alumnos', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/alumnos', {  
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -15,21 +20,17 @@ function ModalNuevo({open,closeModal,update}){
             },
             body: JSON.stringify({ ...values })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                form.resetFields()
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            form.resetFields()
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     return <>
-    <Modal title="Nuevo Alumno" open={open} onOk={()=>form.submit()} onCancel={closeModal}>
+    <Modal title="Nuevo Alumno" open={open} onOk={()=>form.submit()} onCancel={closeModal} confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
             <Form.Item label="Carrera" name="idcarrera">

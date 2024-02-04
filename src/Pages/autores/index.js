@@ -7,6 +7,7 @@ import ModalNuevo from "./nuevo";
 import ModalEditar from "./editar";
 import moment from 'moment';
 import { sortAntd } from "../../utils/sortAntd";
+import useApiFetch from "../../Hooks/useApiFetch";
 const { Search } = Input;
 
 function Autores(){
@@ -17,6 +18,8 @@ function Autores(){
     const [openEditar, setOpenEditar] = useState({open:false})
     const [pagination,setPagination] = useState({})
     const [params,setParams] = useState({limit:10,page:1})
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
     const columns = [
         {
@@ -77,23 +80,20 @@ function Autores(){
 
     useEffect(()=>{
         const query = '?' + new URLSearchParams(params).toString();
-        fetch(MAIN_API + '/autores' + query, {  
+        setLoading(true)
+        fetchData(MAIN_API + '/autores' + query, {  
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("token"), 
             },
         })
-        .then(res => res.json())
         .then(res => {
-            if(res.status === "success"){
-                setData(res.data.autores)
-                setPagination(p=>({...p,total:res.data.totalDataSize}))
-            } else {
-                message.error(res.message);
-            }
+            setData(res?.data?.autores || [])
+            setPagination(p=>({...p,total:res?.data?.totalDataSize}))
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     },[update,params])
 
     const showDeleteConfirm = (record) => {
@@ -133,12 +133,14 @@ function Autores(){
         />
         <Divider/>
         <Search  
-            style={{ width: 304, float:"right", marginBottom:"10px" }} 
+            style={{ maxWidth: 300, float:"right", marginBottom:"10px" }} 
             onSearch={(val)=>setParams(p=>({...p,q:val}))} 
             placeholder="Apellido..." 
             enterButton
         />
         <Table
+            scroll={{x:true}}
+            loading={loading}
             size="small"
             dataSource={data} 
             rowKey={record=>record.id}

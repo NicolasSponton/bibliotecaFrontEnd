@@ -3,14 +3,19 @@ import { MAIN_API } from "../../Config/env";
 import SelectAlumno from "../../Components/fetchSelects/alumnos";
 import SelectLibro from "../../Components/fetchSelects/libros";
 import dayjs from 'dayjs';
+import useApiFetch from "../../Hooks/useApiFetch";
+import { useState } from "react";
 const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
 function ModalEditar({open,closeModal,update,record}){
     const [form] = Form.useForm();
-console.log(record);
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
+
     const handleSubmit = (values) => {
-        fetch(MAIN_API + '/prestamos', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/prestamos', {  
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -23,16 +28,12 @@ console.log(record);
                 fechaDevolucion:values?.fechaDevolucion?.utc()?.format(),
             })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     const initialValues = {
@@ -43,7 +44,7 @@ console.log(record);
     }
 
     return <>
-    <Modal title="Editar Prestamo" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose>
+    <Modal title="Editar Prestamo" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} initialValues={initialValues} preserve={false}>
             <Form.Item label="Alumno" name="idalumno" rules={[{required:true}]}>

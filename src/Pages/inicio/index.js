@@ -1,4 +1,4 @@
-import { Card, Col, Row, Space, Table, Input, message, Button, Modal, Tooltip, InputNumber } from "antd"
+import { Card, Col, Row, Space, Table, Input, message, Button, Modal, Tooltip, InputNumber, Spin } from "antd"
 import { PlusOutlined, ExclamationCircleFilled, FileDoneOutlined } from '@ant-design/icons';
 import moment from "moment"
 import dayjs from 'dayjs';
@@ -10,6 +10,7 @@ import ModalNuevoPrestamo from "./nuevoPrestamo";
 import { sortAntd } from "../../utils/sortAntd";
 import ModalNuevoAlumno from "../alumnos/nuevo";
 import ModalNuevoLibro from "../libros/nuevo";
+import useApiFetch from "../../Hooks/useApiFetch";
 const { Search } = Input;
 
 function Inicio(){
@@ -22,6 +23,9 @@ function Inicio(){
     const [openNuevoAlumno, setOpenNuevoAlumno] = useState({open:false})
     const [openNuevoLibro, setOpenNuevoLibro] = useState({open:false})
     const [params,setParams] = useState({limit:10,page:1,pendientes:true})
+    const [loading,setLoading] = useState()
+    const [loadingEstadisticas,setLoadingEstadisticas] = useState()
+    const fetchData = useApiFetch();
 
     const columns = [
         {
@@ -77,49 +81,40 @@ function Inicio(){
     ]
     
     useEffect(()=>{
+        setLoading(true)
         const query = '?' + new URLSearchParams(params).toString();
-        fetch(MAIN_API + '/prestamos' + query, {  
+        fetchData(MAIN_API + '/prestamos' + query, {  
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("token"), 
             },
         })
-        .then(res => res.json())
         .then(res => {
-            if(res.status === "success"){
-                setData(res.data.prestamos)
-                setPagination(p=>({...p,total:res.data.totalDataSize}))
-            } else {
-                message.error(res.message);
-            }
+            setData(res.data.prestamos)
+            setPagination(p=>({...p,total:res.data.totalDataSize}))
         })  
-        .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     },[update,params])
 
     useEffect(()=>{
-        fetch(MAIN_API + '/prestamos/getAllByMonth', {  
+        setLoadingEstadisticas(true)
+        fetchData(MAIN_API + '/prestamos/getAllByMonth', {  
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("token"), 
             },
         })
-        .then(res => res.json())
         .then(res => {
-            if(res.status === "success"){                
-                let stats = []
-                for (let i = 1; i < 13; i++) {
-                    let monthValue = res?.data?.estadisticas?.find(elm => elm.Mes === i)?.Cantidad || 0
-                    stats.push(monthValue)
-                }
-                setEstadisticaPrestamos(stats)
-
-            } else {
-                message.error(res.message);
+            let stats = []
+            for (let i = 1; i < 13; i++) {
+                let monthValue = res?.data?.estadisticas?.find(elm => elm.Mes === i)?.Cantidad || 0
+                stats.push(monthValue)
             }
+            setEstadisticaPrestamos(stats)
         })  
-        .catch(error => message.error(error))
+        .finally(()=>setLoadingEstadisticas(false))
     },[])
 
     const showDevolucionConfirm = (record) => {
@@ -159,14 +154,16 @@ function Inicio(){
     <Row gutter={[9, 9]}>
         <Col xs={24} xl={16}>
             <Card style={{minHeight:"100%"}}>
-                <Button type="primary" onClick={()=>setOpenNuevoPrestamo({open:true})}><PlusOutlined/>Préstamo</Button>
+                <Button style={{marginBottom:"10px" }} type="primary" onClick={()=>setOpenNuevoPrestamo({open:true})}><PlusOutlined/>Préstamo</Button>
                 <Search  
-                    style={{ width: 304, float:"right", marginBottom:"10px" }} 
+                    style={{ maxWidth: 300, float:"right", marginBottom:"10px" }} 
                     onSearch={(val)=>setParams(p=>({...p,q:val}))} 
                     placeholder="Apellido..." 
                     enterButton
                 />
                 <Table
+                    scroll={{x:true}}
+                    loading={loading}
                     size="small"
                     dataSource={data} 
                     rowKey={record=>record.id}
@@ -191,9 +188,11 @@ function Inicio(){
                     </Card>
                 </Col>
                 <Col xs={24} lg={12} xl={24}>
-                    <Card>  
-                        {(estadisticaPrestamos.length > 0) && <LineChart seriesData = {estadisticaPrestamos} />}
-                    </Card>
+                    <Spin spinning={loadingEstadisticas}>
+                        <Card>  
+                            {(estadisticaPrestamos.length > 0) && <LineChart seriesData = {estadisticaPrestamos} />}
+                        </Card>
+                    </Spin>
                 </Col>
             </Row>
         </Col>

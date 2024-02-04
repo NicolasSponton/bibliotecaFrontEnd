@@ -1,14 +1,19 @@
 import { Divider, Form, Input, Modal, message, DatePicker } from "antd"
 import { MAIN_API } from "../../Config/env";
 import dayjs from 'dayjs';
+import useApiFetch from "../../Hooks/useApiFetch";
+import { useState } from "react";
 const utc = require('dayjs/plugin/utc')
 dayjs.extend(utc)
 
 function ModalEditar({open,closeModal,update,record}){
     const [form] = Form.useForm();
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
     const handleSubmit = (values) => {
-        fetch(MAIN_API + '/autores', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/autores', {  
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -20,16 +25,12 @@ function ModalEditar({open,closeModal,update,record}){
                 fechaDeDefuncion:values.fechaDeDefuncion.utc().format(),
             })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     const initialValues = {
@@ -39,7 +40,7 @@ function ModalEditar({open,closeModal,update,record}){
     }
 
     return <>
-    <Modal title="Editar Autor" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose>
+    <Modal title="Editar Autor" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} initialValues={initialValues} preserve={false}>
             <Form.Item label="Nombre" name="nombre" rules={[{required:true}]}>

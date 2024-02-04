@@ -1,13 +1,17 @@
 import { Divider, Form, Input, Modal,message } from "antd"
 import { MAIN_API } from "../../Config/env";
 import SelectCarrera from "../../Components/fetchSelects/carreras";
+import { useState } from "react";
+import useApiFetch from "../../Hooks/useApiFetch";
 
 function ModalEditar({open,closeModal,update,record}){
     const [form] = Form.useForm();
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
     const handleSubmit = (values) => {
-
-        fetch(MAIN_API + '/usuarios', {  
+        setLoading(true)
+        fetchData(MAIN_API + '/usuarios', {  
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -15,20 +19,16 @@ function ModalEditar({open,closeModal,update,record}){
             },
             body: JSON.stringify({ ...values })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     return <>
-    <Modal title="Editar Usuario" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose>
+    <Modal title="Editar Usuario" open={open} onOk={()=>form.submit()} onCancel={closeModal} destroyOnClose confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} initialValues={record} preserve={false}>
             <Form.Item label="Apellido" name="apellido" rules={[{required:true}]}>
@@ -43,7 +43,7 @@ function ModalEditar({open,closeModal,update,record}){
             <Form.Item label="Clave" name="clave" rules={[{required:true}]}>
                 <Input placeholder="Clave..." />
             </Form.Item>
-            <Form.Item label="Email" name="email" rules={[{required:true}]}>
+            <Form.Item label="Email" name="email">
                 <Input placeholder="email@gmail.com" />
             </Form.Item>
             <Form.Item label="IdUsuario" name="id" style={{ display: 'none' }}>

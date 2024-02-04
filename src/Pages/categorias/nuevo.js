@@ -1,12 +1,16 @@
 import { Divider, Form, Input, Modal,message } from "antd"
 import { MAIN_API } from "../../Config/env";
+import useApiFetch from "../../Hooks/useApiFetch";
+import { useState } from "react";
 
 function ModalNuevo({open,closeModal,update}){
     const [form] = Form.useForm();
-    
-    const handleSubmit = (values) => {
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
-        fetch(MAIN_API + '/categorias', {  
+    const handleSubmit = (values) => {
+        setLoading(true)
+        fetchData(MAIN_API + '/categorias', {  
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -14,21 +18,17 @@ function ModalNuevo({open,closeModal,update}){
             },
             body: JSON.stringify({ ...values })
         })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === "success"){
-                form.resetFields()
-                closeModal()
-                update()
-            } else {
-                message.error(res.message);
-            }
+        .then(() => {
+            form.resetFields()
+            closeModal()
+            update()
         })  
         .catch(error => message.error(error))
+        .finally(()=>setLoading(false))
     };
 
     return <>
-    <Modal title="Nueva Categoria" open={open} onOk={()=>form.submit()} onCancel={closeModal}>
+    <Modal title="Nueva Categoria" open={open} onOk={()=>form.submit()} onCancel={closeModal} confirmLoading={loading}>
         <Divider/>
         <Form onFinish={handleSubmit} form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
             <Form.Item label="Categoria" name="categoria" rules={[{required:true}]}>

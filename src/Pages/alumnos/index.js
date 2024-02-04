@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import ModalNuevo from "./nuevo";
 import ModalEditar from "./editar";
 import { sortAntd } from "../../utils/sortAntd";
+import useApiFetch from "../../Hooks/useApiFetch";
 const { Search } = Input;
 
 function Alumnos(){
@@ -16,6 +17,8 @@ function Alumnos(){
     const [openEditar, setOpenEditar] = useState({open:false})
     const [pagination,setPagination] = useState({})
     const [params,setParams] = useState({limit:10,page:1})
+    const [loading,setLoading] = useState()
+    const fetchData = useApiFetch();
 
     const columns = [
         {
@@ -86,29 +89,21 @@ function Alumnos(){
     ]
 
     useEffect(()=>{
-        const abortController = new AbortController();
-
         const query = '?' + new URLSearchParams(params).toString();
-        fetch(MAIN_API + '/alumnos' + query, { 
+        setLoading(true)
+        fetchData(MAIN_API + '/alumnos' + query, { 
             method: 'GET',
-            signal: abortController.signal,
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("token"), 
             }
         })
-        .then(res => res.json())
         .then(res => {
-            if(res.status === "success"){
-                setData(res.data.alumnos)
-                setPagination(p=>({...p,total:res.data.totalDataSize}))
-            } else {
-                message.error(res.message);
-            }
+            setData(res?.data?.alumnos || [])
+            setPagination(p=>({...p,total:res?.data?.totalDataSize}))
         })  
-        .catch(e => { if (!abortController.signal.aborted) { message.error(e.toString()) }})
+        .finally(()=>setLoading(false))
 
-        return () => abortController.abort()
     },[update,params])
 
     const showDeleteConfirm = (record) => {
@@ -148,12 +143,14 @@ function Alumnos(){
         />
         <Divider/>
         <Search  
-            style={{ width: 304, float:"right", marginBottom:"10px" }} 
+            style={{ maxWidth: 300, float:"right", marginBottom:"10px" }} 
             onSearch={(val)=>setParams(p=>({...p,q:val}))} 
             placeholder="Apellido..." 
             enterButton
         />
         <Table
+            scroll={{x:true}}
+            loading={loading}
             size="small"
             dataSource={data} 
             rowKey={record=>record.id}
