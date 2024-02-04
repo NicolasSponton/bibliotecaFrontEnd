@@ -18,6 +18,8 @@ The application was developed with the intention of managing the loans of a scho
 The system has the ability to load books, in addition to data that can be associated with books such as authors, categories, publisher.
 In turn, students can also be loaded into the system and later lend a book to a student. These loans are registered in the system with the date the loan was made, to which student and which book. The system allows you to mark a loan as returned when the student returns the book.
 
+[Back End App](https://github.com/NicolasSponton/bibliotecaBackEnd) is necessary for full operation.
+
 ### Built With
 
 * [![React][React.js]][React-url]
